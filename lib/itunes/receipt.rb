@@ -1,7 +1,8 @@
 require "itunes/receipt/version"
+require "itunes/receipt/service"
+require "itunes/receipt/properties"
+require "itunes/receipt/v1"
+require "itunes/receipt/error"
+require "itunes/receipt/response"
 
-module Itunes
-  module Receipt
-    # Your code goes here...
-  end
-end
+module Itunes::Receipt; end
