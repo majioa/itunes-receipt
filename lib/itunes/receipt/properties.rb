@@ -20,7 +20,27 @@ module Itunes::Receipt::Properties
          name: 'purchase_date_ms',
          prc: proc { |v| Time.at(v.to_f / 1_000) },
       },
-      'expires_date' => proc { |v| Time.at(v.to_f / 1_000) }
+      'expires_date' => {
+         name: [ 'expires_date_ms', 'expires_date' ],
+         prc: proc { |v| Time.at(v.to_f / 1_000) },
+      },
+      'receipt_type' => true,
+      'adam_id' => proc { |v| v.to_i },
+      'app_item_id' => proc { |v| v.to_i },
+      'bundle_id' => true,
+      'application_version' => true,
+      'download_id' => proc { |v| v.to_i },
+      'version_external_identifier' => proc { |v| v.to_i },
+      'receipt_creation_date' => {
+         name: 'receipt_creation_date_ms',
+         prc: proc { |v| Time.at(v.to_f / 1_000) },
+      },
+      'request_date' => {
+         name: 'request_date_ms',
+         prc: proc { |v| Time.at(v.to_f / 1_000) },
+      },
+      'original_application_version' => true,
+      'is_trial_period' => proc { |v| v == 'true' },
    }
 
    def self.included klass
@@ -37,11 +57,26 @@ module Itunes::Receipt::Properties
                end
             end;
          when Hash
-            klass.class_eval <<-"end;", __FILE__, __LINE__+1
-               def #{prop}
-                  Itunes::Receipt::Properties::LIST['#{prop}'][:prc][data['#{value[:name]}']]
-               end
-            end;
+            case value[:name]
+            when String
+               klass.class_eval <<-"end;", __FILE__, __LINE__+1
+                  def #{prop}
+                     Itunes::Receipt::Properties::LIST['#{prop}'][:prc][data['#{value[:name]}']]
+                  end
+               end;
+            when Array
+               klass.class_eval <<-"end;", __FILE__, __LINE__+1
+                  def #{prop}
+                     #{value[:name]}.reduce(nil) do |res, name|
+                        if not res and data[name]
+                           Itunes::Receipt::Properties::LIST['#{prop}'][:prc][data[name]]
+                        else
+                           res
+                        end
+                     end
+                  end
+               end;
+            end
          when Proc
             klass.class_eval <<-"end;", __FILE__, __LINE__+1
                def #{prop}
