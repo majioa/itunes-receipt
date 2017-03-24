@@ -4,7 +4,7 @@ class Itunes::Receipt::Response
    attr_reader :data, :response, :request
 
    def latest_receipt
-      info = data['latest_receipt_info']
+      info = data['latest_receipt_info'] || data['latest_expired_receipt_info']
 
       @latest_receipt ||=
       case info

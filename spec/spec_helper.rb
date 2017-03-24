@@ -1,5 +1,6 @@
 require "pry"
 require "vcr"
+require "timecop"
 require "bundler/setup"
 require "itunes/receipt"
 
@@ -26,5 +27,6 @@ RSpec.configure do |config|
 
    config.after(:each) do
       VCR.eject_cassette
+      Timecop.return
    end
 end

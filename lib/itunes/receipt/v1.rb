@@ -11,6 +11,10 @@ class Itunes::Receipt::V1
       data.dup
    end
 
+   def expired?
+      self.expires_date < Time.now
+   end
+
    protected
 
    def initialize data: nil

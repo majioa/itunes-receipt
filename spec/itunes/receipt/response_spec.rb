@@ -5,6 +5,7 @@ RSpec.describe Itunes::Receipt::Response do
    let(:invalid_password) { 'invalid_password' }
 
    let(:receipt_data_v1) { Base64.encode64(IO.read('spec/fixtures/files/kvitok_for_year.json')) }
+   let(:receipt_data_v1_expired) { Base64.encode64(IO.read('spec/fixtures/files/kvitok_expired.json')) }
    let(:receipt_data_v1_invalid_data) { 'invalid receipt data' }
 
    let(:receipt_data_v2) { IO.read('spec/fixtures/files/kvitok_for_year.base64').strip }
@@ -91,8 +92,48 @@ RSpec.describe Itunes::Receipt::Response do
       end
    end
 
+   describe "iTunes expired receipt" do
+      subject do
+         service = Itunes::Receipt::Service.new(host: Itunes::Receipt::Service::TEST_HOST,
+                                                password: password)
 
-   describe "iTunes invalid receipt JSON" do
+         service.validate(receipt_data: receipt_data_v1_expired)
+      end
+
+      it { is_expected.to be_a(Itunes::Receipt::Response) }
+      it { expect(subject).to_not be_valid }
+
+      context "#request" do
+         it { expect(subject.request).to be_a(Hash) }
+      end
+
+      context "#response" do
+         it { expect(subject.response).to be_a(Excon::Response) }
+      end
+
+      context "#receipt" do
+         it { expect(subject.latest_receipt).to be_a(Itunes::Receipt::V1) }
+      end
+
+      context "#latest_receipt" do
+         it { expect(subject.latest_receipt).to be_a(Itunes::Receipt::V1) }
+      end
+
+      context "#data" do
+         it { expect(subject.data).to be_a(Hash) }
+      end
+
+      context "#status" do
+         it { expect(subject.status).to be_an(Integer) }
+         it { expect(subject.status).to eq(21006) }
+      end
+
+      context "#validate!" do
+         it { expect { subject.validate! }.to raise_error(Itunes::Receipt::SubscriptionExpiredError) }
+      end
+   end
+
+   describe "iTunes expired receipt" do
       subject do
          service = Itunes::Receipt::Service.new(host: Itunes::Receipt::Service::TEST_HOST,
                                                 password: invalid_password)

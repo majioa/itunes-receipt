@@ -13,6 +13,10 @@ class Itunes::Receipt::V2
       YAML.load(data.to_yaml)
    end
 
+   def expired?
+      self.expires_date < Time.now
+   end
+
    protected
 
    def initialize data: nil
