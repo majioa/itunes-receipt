@@ -4,14 +4,14 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'itunes/receipt/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "itunes-receipt"
+  spec.name          = "itunes-receipt-validate"
   spec.version       = Itunes::Receipt::VERSION
   spec.authors       = ["Malo Skrylevo"]
   spec.email         = ["majioa@yandex.ru"]
 
-  spec.summary       = %q{iTunes Receipt processing library}
-  spec.description   = %q{iTunes Receipt processing library}
-  spec.homepage      = "http://github.com/majioa/itunes-receipt"
+  spec.summary       = %q{iTunes Receipt validation library}
+  spec.description   = %q{iTunes Receipt validation library}
+  spec.homepage      = "http://github.com/majioa/itunes-receipt-validate"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
